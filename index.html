@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JobFinder - Job Portal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- HALAMAN DAFTAR & LOGIN -->
+<section id="authScreen" class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-brand">Job<span>Finder.</span></div>
+    <h2 id="authTitle">Selamat Datang!</h2>
+    <p class="auth-subtitle" id="authSubtitle">Masuk untuk melanjutkan ke JobFinder.</p>
+
+    <form id="loginForm" class="auth-form">
+      <div class="form-group">
+        <label for="loginEmail">Email</label>
+        <input id="loginEmail" type="email" placeholder="email@example.com" autocomplete="email" required>
+      </div>
+      <div class="form-group">
+        <label for="loginPassword">Password</label>
+        <input id="loginPassword" type="password" placeholder="Masukkan password" autocomplete="current-password" required>
+      </div>
+      <button class="primary auth-submit" type="submit">Masuk</button>
+      <p class="auth-switch">Belum punya akun? <button type="button" id="showRegisterBtn">Daftar sekarang</button></p>
+    </form>
+
+    <form id="registerForm" class="auth-form" hidden>
+      <div class="form-group">
+        <label for="registerName">Nama Lengkap</label>
+        <input id="registerName" type="text" placeholder="Masukkan nama lengkap" autocomplete="name" required>
+      </div>
+      <div class="form-group">
+        <label for="registerRole">Jenis Akun</label>
+        <select id="registerRole" class="field" required>
+          <option value="applicant">Pelamar</option>
+          <option value="hrd">HRD Perusahaan</option>
+        </select>
+      </div>
+      <div class="form-group" id="companyGroup" hidden>
+        <label for="registerCompany">Nama Perusahaan</label>
+        <input id="registerCompany" type="text" placeholder="Contoh: Tech Indonesia">
+        <small class="small-muted">Isi sesuai nama perusahaan yang lowongannya ingin kamu kelola.</small>
+      </div>
+      <div class="form-group">
+        <label for="registerEmail">Email</label>
+        <input id="registerEmail" type="email" placeholder="email@example.com" autocomplete="email" required>
+      </div>
+      <div class="form-group">
+        <label for="registerPassword">Password</label>
+        <input id="registerPassword" type="password" placeholder="Minimal 6 karakter" minlength="6" autocomplete="new-password" required>
+      </div>
+      <div class="form-group">
+        <label for="confirmPassword">Konfirmasi Password</label>
+        <input id="confirmPassword" type="password" placeholder="Ulangi password" minlength="6" autocomplete="new-password" required>
+      </div>
+      <button class="primary auth-submit" type="submit">Buat Akun</button>
+      <p class="auth-switch">Sudah punya akun? <button type="button" id="showLoginBtn">Masuk</button></p>
+    </form>
+    <p class="auth-message" id="authMessage" role="alert"></p>
+  </div>
+</section>
+
+<div class="app" id="jobApp" hidden>
+  <aside class="sidebar">
+    <div class="logo">Job<span>Finder.</span></div>
+    <div class="nav-label">MENU UTAMA</div>
+    <button class="nav-link active applicant-only" data-page="dashboard">🏠 Dashboard</button>
+    <button class="nav-link applicant-only" data-page="jobs">💼 Cari Pekerjaan</button>
+    <button class="nav-link applicant-only" data-page="saved">❤️ Tersimpan</button>
+    <button class="nav-link applicant-only" data-page="applications">📄 Lamaran Saya</button>
+    <button class="nav-link hrd-only" data-page="hrdApplications" hidden>🧑‍💼 Kelola Lamaran</button>
+    <div class="nav-label applicant-only">PENGATURAN</div>
+    <button class="nav-link applicant-only" data-page="profile">👤 Profil Saya</button>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h2 id="pageTitle">Dashboard</h2>
+        <div class="small-muted">Temukan peluang karier terbaikmu.</div>
+      </div>
+      <div class="top-right">
+        <span>🔔</span>
+        <div class="avatar" id="topAvatar">U</div>
+        <div class="small-muted" id="topName">Pengguna</div>
+        <button class="logout-btn" id="logoutBtn" type="button">Keluar</button>
+      </div>
+    </header>
+
+    <!-- 1. DASHBOARD -->
+    <section id="dashboard" class="page active applicant-only">
+      <div class="welcome">
+        <div class="circle"></div>
+        <h2>Temukan pekerjaan impianmu! 👋</h2>
+        <p>Jelajahi berbagai lowongan dan temukan karier yang sesuai dengan kemampuanmu.</p>
+        <div class="searchbar">
+          <input id="homeSearch" placeholder="Cari posisi pekerjaan..." aria-label="Cari pekerjaan">
+          <button class="primary" id="homeSearchBtn">Cari Sekarang</button>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="stat-icon">💼</div><strong id="statJobs">0</strong><small>Total Lowongan</small></div>
+        <div class="stat"><div class="stat-icon">❤️</div><strong id="statSaved">0</strong><small>Lowongan Favorit</small></div>
+        <div class="stat"><div class="stat-icon">📄</div><strong id="statApplied">0</strong><small>Lamaran Terkirim</small></div>
+      </div>
+
+      <div class="section-head">
+        <h3>Rekomendasi Pekerjaan</h3>
+        <button class="text-btn" id="seeAllJobs">Lihat Semua →</button>
+      </div>
+      <div class="job-grid" id="recommended"></div>
+    </section>
+
+    <!-- 2. PENCARIAN PEKERJAAN -->
+    <section id="jobs" class="page applicant-only">
+      <h3>Jelajahi Lowongan Kerja</h3>
+      <p class="small-muted">Cari pekerjaan berdasarkan posisi, lokasi, dan kategori.</p>
+      <div class="filters">
+        <input class="field" id="searchInput" placeholder="🔍 Nama pekerjaan atau perusahaan">
+        <select class="field" id="locationFilter">
+          <option value="">Semua Lokasi</option>
+          <option>Jakarta</option><option>Bandung</option>
+          <option>Bekasi</option><option>Surabaya</option>
+          <option>Yogyakarta</option><option>Remote</option>
+        </select>
+        <select class="field" id="categoryFilter">
+          <option value="">Semua Kategori</option>
+          <option>Teknologi</option><option>Desain</option>
+          <option>Marketing</option><option>Keuangan</option>
+          <option>Administrasi</option>
+        </select>
+      </div>
+      <div class="small-muted result-count" id="resultCount"></div>
+      <div class="job-grid" id="allJobs"></div>
+    </section>
+
+    <!-- 3. LOWONGAN TERSIMPAN -->
+    <section id="saved" class="page applicant-only">
+      <h3>❤️ Lowongan Favorit</h3>
+      <p class="small-muted">Daftar pekerjaan yang kamu simpan.</p>
+      <div class="job-grid" id="savedJobs"></div>
+    </section>
+
+    <!-- 4. LAMARAN -->
+    <section id="applications" class="page applicant-only">
+      <h3>📄 Lamaran Saya</h3>
+      <p class="small-muted">Pantau pekerjaan yang sudah kamu lamar.</p>
+      <div class="panel" id="applicationList"></div>
+    </section>
+
+    <section id="hrdApplications" class="page hrd-only" hidden>
+      <h3>🧑‍💼 Manajemen Lamaran</h3>
+      <p class="small-muted">Periksa data pelamar dan tentukan hasil seleksi untuk perusahaan kamu.</p>
+      <div class="stats">
+        <div class="stat"><strong id="hrdTotal">0</strong><small>Total Lamaran</small></div>
+        <div class="stat"><strong id="hrdWaiting">0</strong><small>Menunggu / Diproses</small></div>
+        <div class="stat"><strong id="hrdAccepted">0</strong><small>Diterima</small></div>
+      </div>
+      <div class="panel" id="hrdApplicationList"></div>
+    </section>
+
+    <!-- 5. PROFIL -->
+    <section id="profile" class="page">
+      <h3>👤 Profil Pelamar</h3>
+      <div class="profile-grid">
+        <div class="panel profile-summary">
+          <div class="profile-avatar">👤</div>
+          <h3 id="profileDisplay">Pengguna</h3>
+          <p class="small-muted">Job Seeker</p>
+          <p class="small-muted">Profil Pencari Kerja</p>
+        </div>
+        <div class="panel">
+          <h3>Informasi Pribadi</h3>
+          <div class="form-group">
+            <label for="name">Nama Lengkap</label>
+            <input id="name" placeholder="Masukkan nama">
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input id="email" type="email" placeholder="email@example.com">
+          </div>
+          <div class="form-group">
+            <label for="phone">Nomor Telepon</label>
+            <input id="phone" placeholder="08xxxxxxxxxx">
+          </div>
+          <div class="form-group">
+            <label for="education">Pendidikan Terakhir</label>
+            <input id="education" placeholder="Contoh: SMA / S1">
+          </div>
+          <div class="form-group">
+            <label for="skills">Keahlian</label>
+            <textarea id="skills" placeholder="Contoh: HTML, CSS, Desain"></textarea>
+          </div>
+          <button class="primary" id="saveProfileBtn">Simpan Profil</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- NAVIGASI MOBILE -->
+  <nav class="mobile-nav" aria-label="Navigasi utama">
+    <button class="active applicant-only" data-page="dashboard"><span>🏠</span>Home</button>
+    <button class="applicant-only" data-page="jobs"><span>🔎</span>Cari</button>
+    <button class="applicant-only" data-page="saved"><span>❤️</span>Favorit</button>
+    <button class="applicant-only" data-page="applications"><span>📄</span>Lamaran</button>
+    <button class="hrd-only" data-page="hrdApplications" hidden><span>🧑‍💼</span>HRD</button>
+    <button class="applicant-only" data-page="profile"><span>👤</span>Profil</button>
+  </nav>
+</div>
+
+<!-- MODAL DETAIL / LAMARAN -->
+<div class="modal-bg" id="modalBg" role="dialog" aria-modal="true" aria-label="Detail pekerjaan">
+  <div class="modal">
+    <button class="close" id="closeModalBtn" aria-label="Tutup">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
